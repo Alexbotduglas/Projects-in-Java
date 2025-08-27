@@ -1,10 +1,11 @@
-public class Board {
-    private final char[][] board;
-    private static final int SIZE = 3;
+public class Board { //
+    private final char[][] board;      // Двумерный массив для хранения состояния поля
+    private static final int SIZE = 3; // Размер поля (3x3)
 
+    // Конструктор класса Board - вызывается при создании нового объекта Board
     public Board() {
-        board = new char[SIZE][SIZE];
-        initializeBoard();
+        board = new char[SIZE][SIZE];  // Создает массив 3 на 3 для хранения символов X, O и пробелов
+        initializeBoard();             // Вызывает метод для заполнения поля пустыми клетками
     }
 
     // Инициализация поля пустыми клетками
