@@ -1,157 +1,179 @@
-// Импортируем класс ArrayList для хранения истории вычислений
+// Импортируем нужные классы
 import java.util.ArrayList;
-// Импортируем класс Scanner для ввода данных пользователем
 import java.util.Scanner;
 
-// Объявляем главный класс программы
+// Главный класс программы
 public class Main {
 
     // Точка входа в программу
     public static void main(String[] args) {
 
-        // Создаём объект Scanner для чтения пользовательского ввода с консоли
+        // Объект для ввода данных
         Scanner scanner = new Scanner(System.in);
 
-        // Создаём список (историю) для хранения всех вычисленных выражений
+        // Список для хранения истории вычислений
         ArrayList<String> history = new ArrayList<>();
 
         // Приветственное сообщение
-        System.out.println("=== Расширенный консольный калькулятор ===");
+        System.out.println("=== Инженерный консольный калькулятор ===");
 
-        // Основной бесконечный цикл программы
+        // Главный цикл программы
         while (true) {
 
-            // Вывод меню выбора действия
+            // Меню действий
             System.out.println("\nВыберите действие:");
             System.out.println("1. Вычислить выражение");
             System.out.println("2. Показать историю");
             System.out.println("3. Выход");
             System.out.print("Ваш выбор: ");
 
-            // Считываем выбор пользователя (число)
+            // Читаем выбор пользователя
             int choice = scanner.nextInt();
-            // Читаем оставшийся перевод строки (чтобы избежать проблем со nextLine)
-            scanner.nextLine();
+            scanner.nextLine(); // убрать перевод строки
 
-            // --- Если пользователь выбрал пункт 1 (вычислить выражение) ---
+            // Если пользователь выбрал "1 — Вычислить выражение"
             if (choice == 1) {
-                System.out.print("Введите выражение (например: 5 + 3 или sqrt 16): ");
+                // Просим ввести выражение
+                System.out.print("Введите выражение (например: 5 + 3, sqrt 16, sin 30, log 100): ");
+                String input = scanner.nextLine().trim(); // считываем строку без лишних пробелов
+                String[] tokens = input.split(" "); // разбиваем строку по пробелам
 
-                // Считываем всю строку с выражением
-                String input = scanner.nextLine().trim();
+                double result = 0; // переменная для результата
+                String record = ""; // строка для записи в историю
 
-                // Разделяем строку по пробелам (для выделения чисел и операторов)
-                String[] tokens = input.split(" ");
-
-                // Переменные для результата и записи в историю
-                double result = 0;
-                String record = "";
-
-                // Блок обработки возможных ошибок (например, неверный формат)
                 try {
+                    // --- Тригонометрические и специальные функции ---
+                    if (tokens.length == 2) { // если пользователь ввёл 2 элемента (например, sin 30)
+                        String func = tokens[0].toLowerCase(); // имя функции
+                        double num = Double.parseDouble(tokens[1]); // число
 
-                    // --- Обработка квадратного корня ---
-                    if (tokens.length == 2 && tokens[0].equalsIgnoreCase("sqrt")) {
-                        // Преобразуем второй элемент (число) в тип double
-                        double num = Double.parseDouble(tokens[1]);
+                        switch (func) {
+                            case "sqrt": // квадратный корень
+                                if (num < 0) {
+                                    System.out.println("Ошибка: корень из отрицательного числа!");
+                                    continue; // пропускаем итерацию
+                                }
+                                result = Math.sqrt(num);
+                                record = "sqrt " + num + " = " + result;
+                                break;
 
-                        // Проверяем, что число не отрицательное
-                        if (num < 0) {
-                            System.out.println("Ошибка: корень из отрицательного числа!");
-                            continue; // Переход к следующему циклу
+                            case "sin": // синус (в градусах)
+                                result = Math.sin(Math.toRadians(num));
+                                record = "sin(" + num + "°) = " + result;
+                                break;
+
+                            case "cos": // косинус (в градусах)
+                                result = Math.cos(Math.toRadians(num));
+                                record = "cos(" + num + "°) = " + result;
+                                break;
+
+                            case "tan": // тангенс (в градусах)
+                                result = Math.tan(Math.toRadians(num));
+                                record = "tan(" + num + "°) = " + result;
+                                break;
+
+                            case "log": // десятичный логарифм
+                                if (num <= 0) {
+                                    System.out.println("Ошибка: логарифм не определён для неположительных чисел!");
+                                    continue;
+                                }
+                                result = Math.log10(num);
+                                record = "log(" + num + ") = " + result;
+                                break;
+
+                            case "ln": // натуральный логарифм
+                                if (num <= 0) {
+                                    System.out.println("Ошибка: логарифм не определён для неположительных чисел!");
+                                    continue;
+                                }
+                                result = Math.log(num);
+                                record = "ln(" + num + ") = " + result;
+                                break;
+
+                            default: // если функция неизвестна
+                                System.out.println("Ошибка: неизвестная функция.");
+                                continue;
                         }
 
-                        // Вычисляем квадратный корень
-                        result = Math.sqrt(num);
+                    // --- Арифметические операции ---
+                    } else if (tokens.length == 3) { // если три элемента (например: 5 + 3)
+                        double num1 = Double.parseDouble(tokens[0]); // первое число
+                        String operator = tokens[1]; // оператор
+                        double num2 = Double.parseDouble(tokens[2]); // второе число
 
-                        // Формируем запись для истории
-                        record = "sqrt " + num + " = " + result;
-
-                    // --- Обработка стандартных арифметических операций ---
-                    } else if (tokens.length == 3) {
-                        // Преобразуем первый и третий элемент в числа
-                        double num1 = Double.parseDouble(tokens[0]);
-                        double num2 = Double.parseDouble(tokens[2]);
-                        // Сохраняем оператор
-                        String operator = tokens[1];
-
-                        // Выбираем действие в зависимости от оператора
                         switch (operator) {
-                            case "+":
+                            case "+": // сложение
                                 result = num1 + num2;
                                 break;
-                            case "-":
+                            case "-": // вычитание
                                 result = num1 - num2;
                                 break;
-                            case "*":
+                            case "*": // умножение
                                 result = num1 * num2;
                                 break;
-                            case "/":
-                                // Проверяем деление на ноль
+                            case "/": // деление
                                 if (num2 == 0) {
                                     System.out.println("Ошибка: деление на ноль!");
                                     continue;
                                 }
                                 result = num1 / num2;
                                 break;
-                            case "^":
+                            case "^": // возведение в степень
                                 result = Math.pow(num1, num2);
                                 break;
-                            case "%":
+                            case "%": // остаток от деления
                                 result = num1 % num2;
                                 break;
-                            default:
-                                // Если введён неизвестный оператор
+                            default: // неизвестный оператор
                                 System.out.println("Ошибка: неизвестный оператор.");
                                 continue;
                         }
 
-                        // Формируем строку для истории
+                        // сохраняем запись в историю
                         record = input + " = " + result;
 
                     } else {
-                        // Если выражение не соответствует допустимому формату
+                        // если введён неправильный формат выражения
                         System.out.println("Ошибка: неправильный формат выражения.");
                         continue;
                     }
 
-                    // Выводим результат вычисления
+                    // Выводим результат вычислений
                     System.out.println("Результат: " + result);
 
                     // Добавляем запись в историю
                     history.add(record);
 
                 } catch (NumberFormatException e) {
-                    // Обрабатываем ошибку, если пользователь ввёл нечисловое значение
+                    // обработка ошибки, если пользователь ввёл не число
                     System.out.println("Ошибка: неверный ввод чисел.");
                 }
 
-            // --- Если пользователь выбрал пункт 2 (показать историю) ---
+            // Если пользователь выбрал "2 — Показать историю"
             } else if (choice == 2) {
-                // Проверяем, пуста ли история
                 if (history.isEmpty()) {
+                    // если история пуста
                     System.out.println("История пуста.");
                 } else {
+                    // выводим все записи
                     System.out.println("История вычислений:");
-                    // Проходим по всем записям и выводим их
                     for (String entry : history) {
                         System.out.println(" - " + entry);
                     }
                 }
 
-            // --- Если пользователь выбрал пункт 3 (выход) ---
+            // Если пользователь выбрал "3 — Выход"
             } else if (choice == 3) {
-                // Сообщение о завершении работы
                 System.out.println("Выход из программы. Спасибо!");
-                break; // Прерываем бесконечный цикл
+                break; // выходим из цикла
 
-            // --- Если введено что-то другое ---
+            // Если пользователь ввёл неверный номер меню
             } else {
                 System.out.println("Ошибка: выберите 1, 2 или 3.");
             }
         }
 
-        // Закрываем сканер для предотвращения утечки ресурсов
+        // Закрываем Scanner после выхода
         scanner.close();
     }
 }
