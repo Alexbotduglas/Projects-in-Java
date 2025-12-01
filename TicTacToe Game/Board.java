@@ -1,72 +1,103 @@
-public class Board { //
-    private final char[][] board;      // Двумерный массив для хранения состояния поля
-    private static final int SIZE = 3; // Размер поля (3x3)
+public class Board {
+    // Поля класса (состояние)
 
-    // Конструктор класса Board - вызывается при создании нового объекта Board
-    public Board() {
-        board = new char[SIZE][SIZE];  // Создает массив 3 на 3 для хранения символов X, O и пробелов
-        initializeBoard();             // Вызывает метод для заполнения поля пустыми клетками
-    }
+    private final char[][] board;      // Двумерный массив для хранения состояния игрового поля.
+                                    // Хранит символы 'X', 'O' или '-' (пустая клетка).
+    private static final int SIZE = 3; // Константа, определяющая размер поля (3x3) для легкой модификации.
 
-    // Инициализация поля пустыми клетками
-    private void initializeBoard() {
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                board[i][j] = '-';
-            }
-        }
-    }
+    // Конструктор класса Board
 
-    // Отображение текущего состояния поля
-    public void display() {
-        System.out.println("\nТекущее поле:");
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                System.out.print(board[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
+    public Board() {
+        // Инициализация двумерного массива заданного размера (3 на 3).
+        board = new char[SIZE][SIZE];
+        // Вызов метода для заполнения всего поля символами-заполнителями ('-').
+        initializeBoard();
+    }
 
-    // Проверка, свободна ли клетка
-    public boolean isCellEmpty(int row, int col) {
-        return board[row][col] == '-';
-    }
+    // Инициализация поля пустыми клетками
 
-    // Установка символа в клетку
-    public void setCell(int row, int col, char symbol) {
-        board[row][col] = symbol;
-    }
+    private void initializeBoard() {
+        // Внешний цикл проходит по строкам (i - индекс строки).
+        for (int i = 0; i < SIZE; i++) {
+            // Внутренний цикл проходит по столбцам (j - индекс столбца).
+            for (int j = 0; j < SIZE; j++) {
+                // Установка символа '-' (тире) в каждую клетку, обозначающего, что она пуста.
+                board[i][j] = '-';
+            }
+        }
+    }
 
-    // Проверка победы
-    public boolean checkWin(char symbol) {
-        // Проверка строк и столбцов
-        for (int i = 0; i < SIZE; i++) {
-            if ((board[i][0] == symbol && board[i][1] == symbol && board[i][2] == symbol) ||
-                    (board[0][i] == symbol && board[1][i] == symbol && board[2][i] == symbol)) {
-                return true;
-            }
-        }
+    // Отображение текущего состояния поля в консоли
 
-        // Проверка диагоналей
-        if ((board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) ||
-                (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol)) {
-            return true;
-        }
+    public void display() {
+        System.out.println("\nТекущее поле:");
+        // Внешний цикл для вывода строк.
+        for (int i = 0; i < SIZE; i++) {
+            // Внутренний цикл для вывода элементов в строке.
+            for (int j = 0; j < SIZE; j++) {
+                // Вывод содержимого клетки, за которым следует пробел для форматирования.
+                System.out.print(board[i][j] + " ");
+            }
+            // Переход на новую строку после вывода всех столбцов текущей строки.
+            System.out.println();
+        }
+        System.out.println(); // Дополнительная пустая строка для читабельности.
+    }
 
-        return false;
-    }
+    // Проверка, свободна ли клетка по заданным координатам
 
-    // Проверка на ничью (все клетки заполнены)
-    public boolean isFull() {
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                if (board[i][j] == '-') {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
+    public boolean isCellEmpty(int row, int col) {
+        // Возвращает true, если в указанной клетке находится символ '-'.
+        return board[row][col] == '-';
+    }
+
+    // Установка символа ('X' или 'O') в клетку по заданным координатам
+
+    public void setCell(int row, int col, char symbol) {
+        // Присваивание символа игрока указанной клетке.
+        board[row][col] = symbol;
+    }
+
+    // Проверка условий победы для заданного символа
+
+    public boolean checkWin(char symbol) {
+        // Проверка строк и столбцов (в одном цикле для оптимизации)
+        // Цикл проходит по всем строкам и столбцам.
+        for (int i = 0; i < SIZE; i++) {
+            // Проверка победы по строке i: все три элемента в строке должны быть равны символу.
+            if ((board[i][0] == symbol && board[i][1] == symbol && board[i][2] == symbol) ||
+                    // Проверка победы по столбцу i: все три элемента в столбце должны быть равны символу.
+                    (board[0][i] == symbol && board[1][i] == symbol && board[2][i] == symbol)) {
+                return true; // Найдено совпадение по строке или столбцу.
+            }
+        }
+
+        // Проверка диагоналей
+
+        // Проверка главной диагонали (слева-сверху направо-вниз).
+        if ((board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) ||
+                // Проверка побочной диагонали (справа-сверху налево-вниз).
+                (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol)) {
+            return true; // Найдено совпадение по диагонали.
+        }
+
+        return false; // Условия победы для данного символа не выполнены.
+    }
+
+    // Проверка на ничью (заполнено ли все поле)
+
+    public boolean isFull() {
+        // Внешний цикл проходит по строкам.
+        for (int i = 0; i < SIZE; i++) {
+            // Внутренний цикл проходит по столбцам.
+            for (int j = 0; j < SIZE; j++) {
+                // Если найдена хотя бы одна пустая клетка ('-').
+                if (board[i][j] == '-') {
+                    return false; // Игра еще не закончена (не ничья).
+                }
+            }
+        }
+        // Если цикл завершился, значит, все клетки заполнены.
+        return true; // Ничья (поле заполнено).
+    }
 }
